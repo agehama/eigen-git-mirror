@@ -409,16 +409,8 @@ macro(ei_add_target_property target prop value)
   set_target_properties(${target} PROPERTIES ${prop} "${previous} ${value}")
 endmacro(ei_add_target_property)
 
-install(FILES
-  signature_of_eigen3_matrix_library
-  DESTINATION ${INCLUDE_INSTALL_DIR} COMPONENT Devel
-  )
-
 if(EIGEN_BUILD_PKGCONFIG)
     configure_file(eigen3.pc.in eigen3.pc @ONLY)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eigen3.pc
-        DESTINATION ${PKGCONFIG_INSTALL_DIR}
-        )
 endif()
 
 add_subdirectory(Eigen)
@@ -542,8 +534,6 @@ if (NOT CMAKE_VERSION VERSION_LESS 3.0)
   # Export as title case Eigen
   set_target_properties (eigen PROPERTIES EXPORT_NAME Eigen)
 
-  install (TARGETS eigen EXPORT Eigen3Targets)
-
   configure_package_config_file (
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Eigen3Config.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/Eigen3Config.cmake
@@ -568,8 +558,6 @@ if (NOT CMAKE_VERSION VERSION_LESS 3.0)
   # Export Eigen3 package to CMake registry such that it can be easily found by
   # CMake even if it has not been installed to a standard directory.
   export (PACKAGE Eigen3)
-
-  install (EXPORT Eigen3Targets NAMESPACE Eigen3:: DESTINATION ${CMAKEPACKAGE_INSTALL_DIR})
 
 else (NOT CMAKE_VERSION VERSION_LESS 3.0)
   # Fallback to legacy Eigen3Config.cmake without the imported target
@@ -602,15 +590,3 @@ else (NOT CMAKE_VERSION VERSION_LESS 3.0)
                                     COMPATIBILITY SameMajorVersion )
 
 endif (NOT CMAKE_VERSION VERSION_LESS 3.0)
-
-install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/UseEigen3.cmake
-                ${CMAKE_CURRENT_BINARY_DIR}/Eigen3Config.cmake
-                ${CMAKE_CURRENT_BINARY_DIR}/Eigen3ConfigVersion.cmake
-          DESTINATION ${CMAKEPACKAGE_INSTALL_DIR} )
-
-# Add uninstall target
-if(NOT TARGET uninstall)
-  add_custom_target ( uninstall
-      COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/EigenUninstall.cmake)
-endif()
-
